@@ -69,6 +69,7 @@ def get_latest_server_pack_id(mod_id):
 
 def download_server_pack(mod_id, file_id):
     # Get the download URL for the server pack
+
     url = f"{BASE_URL}/mods/{mod_id}/files/{file_id}/download-url"
     headers = {"x-api-key": API_KEY}
     response = requests.get(url, headers=headers)
@@ -83,15 +84,10 @@ def download_server_pack(mod_id, file_id):
         f.write(server_pack_response.content)
     print("Server pack downloaded as 'server-pack.zip'.")
 
-def main():
-    #modpack_name = "ATM10"  # Replace with your desired modpack name
-    #mod_id = get_mod_id(modpack_name)
+def download_latest_atm10():
     mod_id = 925200 #ATM10 ID
     file_id = get_latest_server_pack_id(mod_id)
     print(f"mod_id: {mod_id}\nserver file id: {file_id}")
     download_server_pack(mod_id, file_id)
 
-if __name__ == "__main__":
-    pass
-    main()
 
