@@ -3,3 +3,5 @@ curseforge/*.zip
 .curseforge_api_token
 *.zip
 *__pycache__*
+server/
+downloads/
