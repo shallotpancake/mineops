@@ -1,2 +1,3 @@
 curseforge/.*
 curseforge/*.zip
+.curseforge_api_token
