@@ -1,7 +1,7 @@
 import requests
 from pathlib import Path
 import curseforge.const as const
-
+from zipfile import ZipFile
 
 def search_mods(search_term):
     url = f"{const.BASE_URL}/mods/search"
@@ -34,7 +34,6 @@ def search_author(search_term):
     
     return mods
 
-
 def get_mod_id(modpack_name):
     # Search for the modpack to find its ID
     url = f"{const.BASE_URL}/mods/search"
@@ -44,6 +43,7 @@ def get_mod_id(modpack_name):
     mods = response.json()["data"]
     if not mods:
         raise ValueError(f"Modpack '{modpack_name}' not found.")
+    
     return mods[0]["id"]
 
 def get_latest_server_pack_id(mod_id):
@@ -53,14 +53,15 @@ def get_latest_server_pack_id(mod_id):
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     mod = response.json()["data"]
+
     return mod['latestFiles'][0]['serverPackFileId'], mod['dateModified']
 
 def download_server_pack(mod_id, file_id, date_modified):
     # Get the download URL for the server pack
     filename = f"server-{date_modified}.zip"
-
+    file_path = Path.joinpath(const.DOWNLOAD_DIR, filename)
     # Check if file already exists
-    if Path(filename).is_file():
+    if Path(file_path).is_file():
         print(f"Server file is up to date.")
     else:  
       # If it doesn't proceed to download
@@ -74,8 +75,26 @@ def download_server_pack(mod_id, file_id, date_modified):
       # Download the server pack
       server_pack_response = requests.get(download_url)
       server_pack_response.raise_for_status()
-      
+      download_path = Path.joinpath(const.DOWNLOAD_DIR, filename)
       # Write to file
-      with open(filename, "wb") as f:
+      with open(download_path, "wb") as f:
           f.write(server_pack_response.content)
-      print(f"Server pack downloaded as '{filename}'.")
+      print(f"Server pack downloaded to '{download_path}'.")
+
+      return filename
+      
+def extract_install_server_pack(filename):
+    if not const.SERVER_INSTALLED:
+      extract_dir = const.SERVER_DIR
+      download_dir = const.DOWNLOAD_DIR
+      zip_path = Path.joinpath(download_dir, filename)
+
+      # Open the ZIP file
+      with ZipFile(zip_path, 'r') as zip_ref:
+          # Extract all contents
+          zip_ref.extractall(extract_dir)
+
+      print(f"Contents extracted to '{download_dir.absolute()}'")
+    else:
+        raise NotImplementedError("Server files already exist. Update is not yet implemented")
+
