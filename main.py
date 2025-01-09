@@ -1,0 +1,3 @@
+from curseforge.curseforge import download_latest_atm10
+
+download_latest_atm10()
