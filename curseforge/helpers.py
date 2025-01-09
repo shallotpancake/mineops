@@ -1,34 +1,38 @@
 import requests
 from pathlib import Path
-import curseforge.const as const
+import curseforge.const as cfconst
+try:
+    import const
+except:
+    from .. import const
 from zipfile import ZipFile
 
 def search_mods(search_term):
-    url = f"{const.BASE_URL}/mods/search"
+    url = f"{cfconst.BASE_URL}/mods/search"
     sortField = {"ModLoaderType": "6"}
-    params = {"gameId": const.MINECRAFT_ID, "sortField": sortField, "searchFilter": search_term}
+    params = {"gameId": cfconst.MINECRAFT_ID, "sortField": sortField, "searchFilter": search_term}
 
-    response = const.cfget(url=url, params=params)
+    response = cfconst.cfget(url=url, params=params)
     response.raise_for_status()
     mods = response.json()["data"]
     
     return mods
 
 def get_mod_by_id(id):
-    url = f"{const.BASE_URL}/mods/{id}"
+    url = f"{cfconst.BASE_URL}/mods/{id}"
 
-    response = const.cfget(url=url)
+    response = cfconst.cfget(url=url)
     response.raise_for_status()
     mod = response.json()["data"]
     
     return mod
 
 def search_author(search_term):
-    url = f"{const.BASE_URL}/mods/search"
+    url = f"{cfconst.BASE_URL}/mods/search"
     sortField = {"ModLoaderType": "6"}
-    params = {"gameId": const.MINECRAFT_ID, "sortField": sortField, "authorId": search_term}
+    params = {"gameId": cfconst.MINECRAFT_ID, "sortField": sortField, "authorId": search_term}
 
-    response = const.cfget(url=url, params=params)
+    response = cfconst.cfget(url=url, params=params)
     response.raise_for_status()
     mods = response.json()["data"]
     
@@ -36,9 +40,9 @@ def search_author(search_term):
 
 def get_mod_id(modpack_name):
     # Search for the modpack to find its ID
-    url = f"{const.BASE_URL}/mods/search"
-    params = {"gameId": const.MINECRAFT_ID, "searchFilter": modpack_name}  # Game ID 432 is for Minecraft
-    response = requests.get(url, headers=const.headers, params=params)
+    url = f"{cfconst.BASE_URL}/mods/search"
+    params = {"gameId": cfconst.MINECRAFT_ID, "searchFilter": modpack_name}  # Game ID 432 is for Minecraft
+    response = requests.get(url, headers=cfconst.headers, params=params)
     response.raise_for_status()
     mods = response.json()["data"]
     if not mods:
@@ -48,8 +52,8 @@ def get_mod_id(modpack_name):
 
 def get_latest_server_pack_id(mod_id):
     # Get all files for the modpack and filter for the latest server pack
-    url = f"{const.BASE_URL}/mods/{mod_id}"
-    headers = {"x-api-key": const.API_KEY}
+    url = f"{cfconst.BASE_URL}/mods/{mod_id}"
+    headers = {"x-api-key": cfconst.API_KEY}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     mod = response.json()["data"]
@@ -65,8 +69,8 @@ def download_server_pack(mod_id, file_id, date_modified):
         print(f"Server file is up to date.")
     else:  
       # If it doesn't proceed to download
-      url = f"{const.BASE_URL}/mods/{mod_id}/files/{file_id}/download-url"
-      headers = {"x-api-key": const.API_KEY}
+      url = f"{cfconst.BASE_URL}/mods/{mod_id}/files/{file_id}/download-url"
+      headers = {"x-api-key": cfconst.API_KEY}
       response = requests.get(url, headers=headers)
       response.raise_for_status()
       download_url = response.json()["data"]
@@ -96,5 +100,5 @@ def extract_install_server_pack(filename):
 
       print(f"Contents extracted to '{download_dir.absolute()}'")
     else:
-        raise NotImplementedError("Server files already exist. Update is not yet implemented")
+        print("Server files already exist. Update is not yet implemented")
 
