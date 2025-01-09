@@ -1,3 +1,5 @@
 curseforge/.*
 curseforge/*.zip
 .curseforge_api_token
+*.zip
+*__pycache__*
