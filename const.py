@@ -4,6 +4,9 @@ from pathlib import Path
 SERVER_DIR = Path('server')
 DOWNLOAD_DIR = Path('downloads')
 
+# secrets
+CURSEFORGE_SECRET_PATH = Path('.curseforge_api_token')
+
 # Make these paths if they don't exist
 Path.mkdir(SERVER_DIR, exist_ok=True)
 Path.mkdir(DOWNLOAD_DIR, exist_ok=True)

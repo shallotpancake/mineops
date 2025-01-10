@@ -1,8 +1,9 @@
 from functools import partial
+from const import CURSEFORGE_SECRET_PATH
 import requests
 
 # Get curseforge API token
-with open('./.curseforge_api_token') as f:
+with open(CURSEFORGE_SECRET_PATH, 'r') as f:
     token = f.read().strip()
 if not token:
     raise Exception("Failed to find `.curseforge_api_token` in the current directory.")
