@@ -6,19 +6,11 @@ try:
 except:
     from .. import const
 from zipfile import ZipFile
-
-def search_mods(search_term):
-    url = f"{cfconst.BASE_URL}/mods/search"
-    sortField = {"ModLoaderType": "6"}
-    params = {"gameId": cfconst.MINECRAFT_ID, "sortField": sortField, "searchFilter": search_term}
-
-    response = cfconst.cfget(url=url, params=params)
-    response.raise_for_status()
-    mods = response.json()["data"]
-    
-    return mods
+import os
+import shutil
 
 def get_mod_by_id(id):
+    print("Getting mod via id...")
     url = f"{cfconst.BASE_URL}/mods/{id}"
 
     response = cfconst.cfget(url=url)
@@ -26,17 +18,6 @@ def get_mod_by_id(id):
     mod = response.json()["data"]
     
     return mod
-
-def search_author(search_term):
-    url = f"{cfconst.BASE_URL}/mods/search"
-    sortField = {"ModLoaderType": "6"}
-    params = {"gameId": cfconst.MINECRAFT_ID, "sortField": sortField, "authorId": search_term}
-
-    response = cfconst.cfget(url=url, params=params)
-    response.raise_for_status()
-    mods = response.json()["data"]
-    
-    return mods
 
 def get_mod_id(modpack_name):
     # Search for the modpack to find its ID
@@ -52,12 +33,11 @@ def get_mod_id(modpack_name):
 
 def get_latest_server_pack_id(mod_id):
     # Get all files for the modpack and filter for the latest server pack
+    print("Getting latest server pack id...")
     url = f"{cfconst.BASE_URL}/mods/{mod_id}"
-    headers = {"x-api-key": cfconst.API_KEY}
-    response = requests.get(url, headers=headers)
+    response = cfconst.cfget(url)
     response.raise_for_status()
     mod = response.json()["data"]
-
     return mod['latestFiles'][0]['serverPackFileId'], mod['dateModified']
 
 def download_server_pack(mod_id, file_id, date_modified):
@@ -87,18 +67,31 @@ def download_server_pack(mod_id, file_id, date_modified):
 
       return filename
       
-def extract_install_server_pack(filename):
-    if not const.SERVER_INSTALLED:
-      extract_dir = const.SERVER_DIR
-      download_dir = const.DOWNLOAD_DIR
-      zip_path = Path.joinpath(download_dir, filename)
+def extract_server_pack(filename):
+    if const.SERVER_INSTALLED:
+        print("Server files already exist. Update is not yet implemented")  
+        return 1
+    
+    extract_dir = const.SERVER_DIR
+    download_dir = const.DOWNLOAD_DIR
+    zip_path = Path.joinpath(download_dir, filename)
+    # List the top-level contents of the extracted directory
+    top_level_items = os.listdir(extract_dir)
 
-      # Open the ZIP file
-      with ZipFile(zip_path, 'r') as zip_ref:
-          # Extract all contents
-          zip_ref.extractall(extract_dir)
+    if len(top_level_items) == 1:
+        single_item = os.path.join(extract_dir, top_level_items[0])
+        if os.path.isdir(single_item):
+            # Move all contents of the subdirectory to the parent directory
+            for item in os.listdir(single_item):
+                shutil.move(os.path.join(single_item, item), extract_dir)
+            
+            # Remove the now-empty subdirectory
+            os.rmdir(single_item)
+            print(f"Moved contents of {single_item} to {extract_dir} and removed the empty folder.")
+    # Open the ZIP file
+    with ZipFile(zip_path, 'r') as zip_ref:
+        # Extract all contents
+        zip_ref.extractall(extract_dir)
+    print(f"Contents extracted to '{download_dir.absolute()}'")
 
-      print(f"Contents extracted to '{download_dir.absolute()}'")
-    else:
-        print("Server files already exist. Update is not yet implemented")
 
