@@ -58,9 +58,10 @@ def get_latest_server_file_url(mod_id: int) -> tuple[str, str]:
     files = response.json()['data']
     for file in files:
         if is_release_with_server(file):
-            print(f"Latest full release: {file.get('displayName')}\n{file.get('downloadCount')}")
-            
-            return file.get('downloadUrl'), file.get('fileName').replace(" ", "")
+            print(f"Latest full release: {file.get('displayName')}\nDownloads: {file.get('downloadCount')}")
+            server_file_id = file.get('serverPackFileId')
+            full_download_url = f"{url}{server_file_id}/download-url/"
+            return full_download_url, file.get('fileName').replace(" ", "")
 
     raise Exception("No valid files found")
 
@@ -70,15 +71,24 @@ def download_server_pack(download_url, file_id):
         print(f"Server file is up to date.")
     else:  
       # If it doesn't proceed to download
-      server_pack_response = requests.get(download_url)
-      server_pack_response.raise_for_status()
       download_path = Path.joinpath(const.DOWNLOAD_DIR, file_id)
-      # Write to file
-      with open(download_path, "wb") as f:
-          f.write(server_pack_response.content)
+      server_pack_response = cfconst.cfget(download_url)
+      server_pack_response.raise_for_status()
+      download_file(server_pack_response.json()["data"], download_path)
       print(f"Server pack downloaded to '{download_path}'.")
 
     return file_id
+
+def download_file(url, local_filename):
+    # Send a GET request to the URL
+    with requests.get(url, stream=True) as response:
+        response.raise_for_status()  # Raise an error for bad status codes
+        # Open a local file with write-binary mode
+        with open(local_filename, 'wb') as file:
+            # Write the content to the local file in chunks
+            for chunk in response.iter_content(chunk_size=8192):
+                file.write(chunk)
+    return local_filename
 
 def extract_server_pack(filename):
     if const.SERVER_INSTALLED:
