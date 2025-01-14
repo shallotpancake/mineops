@@ -1,9 +1,10 @@
 import unittest
 from minecraft import server
-from curseforge.helpers import get_mod_id
+from curseforge.helpers import get_mod_id, get_latest_server_file_url
 from const import CURSEFORGE_SECRET_PATH, SERVER_DIR
 from pathlib import Path
 from main import main
+import sys
 
 class TestMainFunction(unittest.TestCase):
     def test_main_runs_successfully(self):
@@ -30,7 +31,21 @@ class TestServerInstall(unittest.TestCase):
         # should be 0 or 1
         # most packs extract into a release folder i.e. Server-Files-2.20
         subdirectories = len([item for item in SERVER_DIR.iterdir() if item.is_dir()])
-        self.assertIn(subdirectories, [0,1])
+        self.assertNotEqual(subdirectories, 1)
+
+class TestCurseforgeHelpers(unittest.TestCase):
+    def test_get_latest_files(self):
+        result = get_latest_server_file_url(mod_id=925200)
+        self.assertIsNotNone(result)
+
 
 if __name__ == "__main__":
-    unittest.main()
+    # Redirect stdout to a file for the entire script
+    log_file_path = "test_output.log"
+    with open(log_file_path, "w") as log_file:
+        sys.stdout = log_file  # Redirect all print statements to the log file
+        try:
+            unittest.main()  # Run the tests
+        finally:
+            sys.stdout = sys.__stdout__  # Restore stdout
+            print(f"Test output here: {log_file_path}")
