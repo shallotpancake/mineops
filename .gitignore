@@ -5,3 +5,5 @@ curseforge/*.zip
 *__pycache__*
 server/
 downloads/
+test_output.log
+.vscode/settings.json
