@@ -49,8 +49,8 @@ if __name__ == "__main__":
     TEST_LOG_FILE_PATH = const.TEST_LOG_FILE_PATH
     with open(TEST_LOG_FILE_PATH, "w", encoding='utf8') as log_file:
         sys.stdout = log_file  # Redirect all print statements to the log file
-    try:
-        unittest.main()  # Run the tests
-    finally:
-        sys.stdout = sys.__stdout__  # Restore stdout
-        print(f"Test output\n {TEST_LOG_FILE_PATH}")
+        try:
+            unittest.main()  # Run the tests
+        finally:
+            sys.stdout = sys.__stdout__  # Restore stdout
+            print(f"Test output\n {TEST_LOG_FILE_PATH}")
