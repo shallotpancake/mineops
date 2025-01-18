@@ -1,7 +1,7 @@
 import unittest
 from minecraft import install
 from curseforge.helpers import get_mod_id, get_latest_server_file_url
-from const import CURSEFORGE_SECRET_PATH, SERVER_DIR
+import const
 from pathlib import Path
 from main import main
 import sys
@@ -16,7 +16,7 @@ class TestMainFunction(unittest.TestCase):
 class TestCurseforgeCredential(unittest.TestCase):
     
     def setUp(self):
-        self.cred_path = CURSEFORGE_SECRET_PATH
+        self.cred_path = const.CURSEFORGE_SECRET_PATH
 
     def test_credential_file_exists(self):
         print("=========test_credential_file_exists=========")
@@ -34,7 +34,7 @@ class TestServerInstall(unittest.TestCase):
         # check number of subdirectories
         # should be 0 or 1
         # most packs extract into a release folder i.e. Server-Files-2.20
-        subdirectories = len([item for item in SERVER_DIR.iterdir() if item.is_dir()])
+        subdirectories = len([item for item in const.SERVER_DIR.iterdir() if item.is_dir()])
         self.assertNotEqual(subdirectories, 1)
 
 class TestCurseforgeHelpers(unittest.TestCase):
@@ -46,11 +46,11 @@ class TestCurseforgeHelpers(unittest.TestCase):
 
 if __name__ == "__main__":
     # Redirect stdout to a file for the entire script
-    log_file_path = "test_output.log"
-    with open(log_file_path, "w") as log_file:
+    TEST_LOG_FILE_PATH = const.TEST_LOG_FILE_PATH
+    with open(TEST_LOG_FILE_PATH, "w", encoding='utf8') as log_file:
         sys.stdout = log_file  # Redirect all print statements to the log file
     try:
         unittest.main()  # Run the tests
     finally:
         sys.stdout = sys.__stdout__  # Restore stdout
-        print(f"Test output\n {log_file_path}")
+        print(f"Test output\n {TEST_LOG_FILE_PATH}")
