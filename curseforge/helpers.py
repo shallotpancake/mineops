@@ -4,7 +4,7 @@ import curseforge.const as cfconst
 import const
 from zipfile import ZipFile
 import shutil
-import pprint
+
 
 def is_release_with_server(file: dict):
     if  file.get('isServerPack', False):
