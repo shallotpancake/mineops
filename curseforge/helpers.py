@@ -1,12 +1,8 @@
 import requests
 from pathlib import Path
 import curseforge.const as cfconst
-try:
-    import const
-except:
-    from .. import const
+import const
 from zipfile import ZipFile
-import os
 import shutil
 import pprint
 
