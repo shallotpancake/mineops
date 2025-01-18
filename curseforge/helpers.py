@@ -67,7 +67,8 @@ def get_latest_server_file_url(mod_id: int) -> tuple[str, str]:
 
 def download_server_pack(download_url, file_id):
     # Check if file already exists
-    if Path(file_id).is_file():
+    
+    if Path(Path.joinpath(const.DOWNLOAD_DIR, file_id)).is_file():
         print(f"Server file is up to date.")
     else:  
       # If it doesn't proceed to download
