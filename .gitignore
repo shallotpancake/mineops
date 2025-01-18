@@ -7,3 +7,4 @@ server/
 downloads/
 test_output.log
 .vscode/settings.json
+mineops.code-workspace
