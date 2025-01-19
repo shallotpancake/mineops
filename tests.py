@@ -53,4 +53,4 @@ if __name__ == "__main__":
             unittest.main()  # Run the tests
         finally:
             sys.stdout = sys.__stdout__  # Restore stdout
-            print(f"Test output\n {TEST_LOG_FILE_PATH}")
+            print(f"Test output:\n  {TEST_LOG_FILE_PATH}")

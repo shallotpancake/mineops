@@ -6,7 +6,7 @@ DOWNLOAD_DIR = Path('downloads')
 LOG_DIR = Path('logs')
 
 # File variables
-TEST_LOG_FILE_PATH = Path('test_output.log')
+TEST_LOG_FILE_PATH = Path.joinpath(LOG_DIR, 'test_output.log').absolute()
 
 # secrets
 CURSEFORGE_SECRET_PATH = Path('.curseforge_api_token')
