@@ -38,7 +38,7 @@ pip install requests
 To download and install the latest ATM10 server:
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 The script will:
