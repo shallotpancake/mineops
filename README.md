@@ -19,7 +19,7 @@ A Python-based FTB (Feed The Beast) Minecraft Server Manager that automates the 
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/mineops.git
+git clone https://github.com/shallotpancake/mineops.git
 cd mineops
 ```
 
